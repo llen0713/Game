@@ -73,6 +73,8 @@
   .vs-label{font-size:1.1rem;font-weight:900;color:#94a3b8;text-align:center;}
 
   .match-actions{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+  .referee-line{font-size:1.05rem;text-align:center;color:#334155;margin-top:4px;font-weight:700;}
+  .referee-name{font-weight:900;color:#0f172a;}
   .forfeit-note{font-size:0.85rem;text-align:center;color:#b45309;margin-top:6px;font-weight:700;min-height:1.2em;}
 
   .sidebar{display:flex;flex-direction:column;gap:16px;}
@@ -90,6 +92,7 @@
   .match-teams-txt{font-size:0.82rem;font-weight:700;color:#1a1a2e;line-height:1.4;}
   .match-time-tag{font-size:0.72rem;color:#94a3b8;text-align:right;}
   .match-done-tag{font-size:0.72rem;color:#16a34a;font-weight:700;}
+  .venue-map{width:100%;border-radius:10px;border:1px solid #e2e8f0;display:block;background:#f8fafc;}
 
   .settings-panel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
   .settings-panel.open{display:flex;}
@@ -100,9 +103,9 @@
   .form-group input,.form-group select{width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;transition:border-color .15s;}
   .form-group input:focus{border-color:#16a34a;}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .col-headers{display:grid;grid-template-columns:24px 1fr 1fr 90px auto;gap:6px;margin-bottom:4px;}
+  .col-headers{display:grid;grid-template-columns:24px 1fr 1fr 90px 1fr auto;gap:6px;margin-bottom:4px;}
   .col-headers span{font-size:0.7rem;color:#94a3b8;font-weight:700;text-align:center;}
-  .match-edit-row{display:grid;grid-template-columns:24px 1fr 1fr 90px auto;gap:6px;align-items:center;margin-bottom:7px;}
+  .match-edit-row{display:grid;grid-template-columns:24px 1fr 1fr 90px 1fr auto;gap:6px;align-items:center;margin-bottom:7px;}
   .match-edit-row span{font-size:0.78rem;font-weight:700;color:#94a3b8;text-align:center;}
   .match-edit-row input{padding:7px 8px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:0.82rem;font-family:inherit;outline:none;text-align:center;}
   .match-edit-row input:focus{border-color:#16a34a;}
@@ -213,6 +216,10 @@
       <div class="card-title"><i class="fa fa-list"></i> 場次列表</div>
       <div class="match-list" id="match-list"><div style="color:#94a3b8;font-size:0.85rem;">請先在設定中新增場次</div></div>
     </div>
+    <div class="card">
+      <div class="card-title"><i class="fa fa-map"></i> 場地配置圖</div>
+      <img src="venue.png" alt="場地配置圖" class="venue-map" onerror="this.style.display='none'">
+    </div>
   </div>
 </div>
 </div>
@@ -260,7 +267,7 @@
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:8px 0 16px;">
     <div class="card-title"><i class="fa fa-table-tennis"></i> 場次管理</div>
     <div class="col-headers">
-      <span>#</span><span>隊伍A</span><span>隊伍B</span><span>開始時間<br>(HHMM)</span><span></span>
+      <span>#</span><span>隊伍A</span><span>隊伍B</span><span>開始時間<br>(HHMM)</span><span>裁判</span><span></span>
     </div>
     <div id="matches-editor"></div>
     <button class="add-match-btn" onclick="addMatchRow()">＋ 新增場次</button>
@@ -279,7 +286,7 @@ let config = {
   title: '小地盃羽球',
 };
 
-let matches = [{"id": 1, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "楊舒心/簡家浩", "startTime": "0840", "done": false}, {"id": 2, "teamA": "場地 2｜混雙A：李長融/蔡仲元", "teamB": "蕭人豪/顏語緗", "startTime": "0840", "done": false}, {"id": 3, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "曹嘉修/劉怡伶", "startTime": "0840", "done": false}, {"id": 4, "teamA": "場地 4｜混雙B：徐子鈞/許寧珊", "teamB": "邱詠恬/潘昌志", "startTime": "0840", "done": false}, {"id": 5, "teamA": "場地 1｜男單A：潘昌志", "teamB": "黃振嘉", "startTime": "0910", "done": false}, {"id": 6, "teamA": "場地 2｜男單A：李承恩", "teamB": "王昱文", "startTime": "0910", "done": false}, {"id": 7, "teamA": "場地 3｜男單B：曹嘉修", "teamB": "李長融", "startTime": "0910", "done": false}, {"id": 8, "teamA": "場地 4｜混雙B：曾瑀婕/許淏丞", "teamB": "江宜達/陳雅玲", "startTime": "0910", "done": false}, {"id": 9, "teamA": "場地 1｜混雙A：林星辰/陳予禮", "teamB": "詹宇崴/蔡依宸", "startTime": "0940", "done": false}, {"id": 10, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "王昱文/黃振嘉", "startTime": "0940", "done": false}, {"id": 11, "teamA": "場地 3｜混雙B：邱詠恬/潘昌志", "teamB": "曾瑀婕/許淏丞", "startTime": "0940", "done": false}, {"id": 12, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "徐子鈞/許寧珊", "startTime": "0940", "done": false}, {"id": 13, "teamA": "場地 1｜男單A：潘昌志", "teamB": "李承恩", "startTime": "1010", "done": false}, {"id": 14, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "王昱文", "startTime": "1010", "done": false}, {"id": 15, "teamA": "場地 3｜男雙：詹宇崴/許淏丞", "teamB": "陳冠岳/游承晏", "startTime": "1010", "done": false}, {"id": 16, "teamA": "場地 4｜混雙B：江宜達/陳雅玲", "teamB": "徐子鈞/許寧珊", "startTime": "1010", "done": false}, {"id": 17, "teamA": "場地 1｜男雙：徐子鈞/李錦坤", "teamB": "詹宇崴/許淏丞", "startTime": "1040", "done": false}, {"id": 18, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "陳冠曄/李佳翰", "startTime": "1040", "done": false}, {"id": 19, "teamA": "場地 3｜混雙A：蕭人豪/顏語緗", "teamB": "林星辰/陳予禮", "startTime": "1040", "done": false}, {"id": 20, "teamA": "場地 4｜男單B：江宜達", "teamB": "李長融", "startTime": "1040", "done": false}, {"id": 21, "teamA": "場地 1｜混雙B：曹嘉修/劉怡伶", "teamB": "邱詠恬/潘昌志", "startTime": "1110", "done": false}, {"id": 22, "teamA": "場地 2｜混雙B：徐子鈞/許寧珊", "teamB": "曾瑀婕/許淏丞", "startTime": "1110", "done": false}, {"id": 23, "teamA": "場地 3｜男雙：陳冠岳/游承晏", "teamB": "王昱文/黃振嘉", "startTime": "1110", "done": false}, {"id": 24, "teamA": "場地 4｜混雙A：詹宇崴/蔡依宸", "teamB": "李長融/蔡仲元", "startTime": "1110", "done": false}, {"id": 25, "teamA": "場地 1｜男單A：潘昌志", "teamB": "王昱文", "startTime": "1140", "done": false}, {"id": 26, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "李承恩", "startTime": "1140", "done": false}, {"id": 27, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "蕭人豪/顏語緗", "startTime": "1140", "done": false}, {"id": 28, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "曾瑀婕/許淏丞", "startTime": "1140", "done": false}, {"id": 29, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "陳冠曄/李佳翰", "startTime": "1305", "done": false}, {"id": 30, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "徐子鈞/李錦坤", "startTime": "1305", "done": false}, {"id": 31, "teamA": "場地 3｜混雙A：李長融/蔡仲元", "teamB": "林星辰/陳予禮", "startTime": "1305", "done": false}, {"id": 32, "teamA": "場地 4｜男單B：江宜達", "teamB": "曹嘉修", "startTime": "1305", "done": false}, {"id": 33, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "蕭人豪/顏語緗", "startTime": "1330", "done": false}, {"id": 34, "teamA": "場地 2｜混雙A：楊舒心/簡家浩", "teamB": "林星辰/陳予禮", "startTime": "1330", "done": false}, {"id": 35, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "邱詠恬/潘昌志", "startTime": "1330", "done": false}, {"id": 36, "teamA": "場地 4｜男雙：王昱文/黃振嘉", "teamB": "徐子鈞/李錦坤", "startTime": "1330", "done": false}, {"id": 37, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "王昱文/黃振嘉", "startTime": "1355", "done": false}, {"id": 38, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "徐子鈞/李錦坤", "startTime": "1355", "done": false}, {"id": 39, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "李長融/蔡仲元", "startTime": "1355", "done": false}, {"id": 40, "teamA": "場地 1｜男單準決賽（1）A1", "teamB": "B2", "startTime": "1420", "done": false}, {"id": 41, "teamA": "場地 2｜男單準決賽（2）A2", "teamB": "B1", "startTime": "1420", "done": false}, {"id": 42, "teamA": "場地 1｜混雙準決賽（3）A1", "teamB": "B2", "startTime": "1445", "done": false}, {"id": 43, "teamA": "場地 2｜混雙準決賽（4）A2", "teamB": "B1", "startTime": "1445", "done": false}, {"id": 44, "teamA": "場地 1｜男單決賽（1）勝", "teamB": "（2）勝", "startTime": "1510", "done": false}, {"id": 45, "teamA": "場地 1｜男雙決賽", "teamB": "待定", "startTime": "1530", "done": false}, {"id": 46, "teamA": "場地 1｜混雙決賽（3）勝", "teamB": "（4）勝", "startTime": "1555", "done": false}];
+let matches = [{"id": 1, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "楊舒心/簡家浩", "startTime": "0840", "referee": "陳冠岳", "done": false}, {"id": 2, "teamA": "場地 2｜混雙A：李長融/蔡仲元", "teamB": "蕭人豪/顏語緗", "startTime": "0840", "referee": "游承晏", "done": false}, {"id": 3, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "曹嘉修/劉怡伶", "startTime": "0840", "referee": "陳冠曄", "done": false}, {"id": 4, "teamA": "場地 4｜混雙B：徐子鈞/許寧珊", "teamB": "邱詠恬/潘昌志", "startTime": "0840", "referee": "李佳翰", "done": false}, {"id": 5, "teamA": "場地 1｜男單A：潘昌志", "teamB": "黃振嘉", "startTime": "0910", "referee": "顏語緗", "done": false}, {"id": 6, "teamA": "場地 2｜男單A：李承恩", "teamB": "王昱文", "startTime": "0910", "referee": "蔡依宸", "done": false}, {"id": 7, "teamA": "場地 3｜男單B：曹嘉修", "teamB": "李長融", "startTime": "0910", "referee": "林星辰", "done": false}, {"id": 8, "teamA": "場地 4｜混雙B：曾瑀婕/許淏丞", "teamB": "江宜達/陳雅玲", "startTime": "0910", "referee": "許寧珊", "done": false}, {"id": 9, "teamA": "場地 1｜混雙A：林星辰/陳予禮", "teamB": "詹宇崴/蔡依宸", "startTime": "0940", "referee": "蕭人豪", "done": false}, {"id": 10, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "王昱文/黃振嘉", "startTime": "0940", "referee": "江宜達", "done": false}, {"id": 11, "teamA": "場地 3｜混雙B：邱詠恬/潘昌志", "teamB": "曾瑀婕/許淏丞", "startTime": "0940", "referee": "李長融", "done": false}, {"id": 12, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "徐子鈞/許寧珊", "startTime": "0940", "referee": "陳冠岳", "done": false}, {"id": 13, "teamA": "場地 1｜男單A：潘昌志", "teamB": "李承恩", "startTime": "1010", "referee": "李錦坤", "done": false}, {"id": 14, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "王昱文", "startTime": "1010", "referee": "陳冠曄", "done": false}, {"id": 15, "teamA": "場地 3｜男雙：詹宇崴/許淏丞", "teamB": "陳冠岳/游承晏", "startTime": "1010", "referee": "曹嘉修", "done": false}, {"id": 16, "teamA": "場地 4｜混雙B：江宜達/陳雅玲", "teamB": "徐子鈞/許寧珊", "startTime": "1010", "referee": "陳予禮", "done": false}, {"id": 17, "teamA": "場地 1｜男雙：徐子鈞/李錦坤", "teamB": "詹宇崴/許淏丞", "startTime": "1040", "referee": "王昱文", "done": false}, {"id": 18, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "陳冠曄/李佳翰", "startTime": "1040", "referee": "黃振嘉", "done": false}, {"id": 19, "teamA": "場地 3｜混雙A：蕭人豪/顏語緗", "teamB": "林星辰/陳予禮", "startTime": "1040", "referee": "楊舒心", "done": false}, {"id": 20, "teamA": "場地 4｜男單B：江宜達", "teamB": "李長融", "startTime": "1040", "referee": "簡家浩", "done": false}, {"id": 21, "teamA": "場地 1｜混雙B：曹嘉修/劉怡伶", "teamB": "邱詠恬/潘昌志", "startTime": "1110", "referee": "陳予禮", "done": false}, {"id": 22, "teamA": "場地 2｜混雙B：徐子鈞/許寧珊", "teamB": "曾瑀婕/許淏丞", "startTime": "1110", "referee": "楊舒心", "done": false}, {"id": 23, "teamA": "場地 3｜男雙：陳冠岳/游承晏", "teamB": "王昱文/黃振嘉", "startTime": "1110", "referee": "林星辰", "done": false}, {"id": 24, "teamA": "場地 4｜混雙A：詹宇崴/蔡依宸", "teamB": "李長融/蔡仲元", "startTime": "1110", "referee": "顏語緗", "done": false}, {"id": 25, "teamA": "場地 1｜男單A：潘昌志", "teamB": "王昱文", "startTime": "1140", "referee": "蔡仲元", "done": false}, {"id": 26, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "李承恩", "startTime": "1140", "referee": "徐子鈞", "done": false}, {"id": 27, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "蕭人豪/顏語緗", "startTime": "1140", "referee": "許寧珊", "done": false}, {"id": 28, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "曾瑀婕/許淏丞", "startTime": "1140", "referee": "邱詠恬", "done": false}, {"id": 29, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "陳冠曄/李佳翰", "startTime": "1305", "referee": "蔡依宸", "done": false}, {"id": 30, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "徐子鈞/李錦坤", "startTime": "1305", "referee": "楊舒心", "done": false}, {"id": 31, "teamA": "場地 3｜混雙A：李長融/蔡仲元", "teamB": "林星辰/陳予禮", "startTime": "1305", "referee": "陳雅玲", "done": false}, {"id": 32, "teamA": "場地 4｜男單B：江宜達", "teamB": "曹嘉修", "startTime": "1305", "referee": "曾瑀婕", "done": false}, {"id": 33, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "蕭人豪/顏語緗", "startTime": "1330", "referee": "游承晏", "done": false}, {"id": 34, "teamA": "場地 2｜混雙A：楊舒心/簡家浩", "teamB": "林星辰/陳予禮", "startTime": "1330", "referee": "許淏丞", "done": false}, {"id": 35, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "邱詠恬/潘昌志", "startTime": "1330", "referee": "李承恩", "done": false}, {"id": 36, "teamA": "場地 4｜男雙：王昱文/黃振嘉", "teamB": "徐子鈞/李錦坤", "startTime": "1330", "referee": "陳冠曄", "done": false}, {"id": 37, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "王昱文/黃振嘉", "startTime": "1355", "referee": "陳予禮", "done": false}, {"id": 38, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "徐子鈞/李錦坤", "startTime": "1355", "referee": "顏語緗", "done": false}, {"id": 39, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "李長融/蔡仲元", "startTime": "1355", "referee": "曾瑀婕", "done": false}, {"id": 40, "teamA": "場地 1｜男單準決賽（1）A1", "teamB": "B2", "startTime": "1420", "referee": "詹宇崴", "done": false}, {"id": 41, "teamA": "場地 2｜男單準決賽（2）A2", "teamB": "B1", "startTime": "1420", "referee": "許淏丞", "done": false}, {"id": 42, "teamA": "場地 1｜混雙準決賽（3）A1", "teamB": "B2", "startTime": "1445", "referee": "李佳翰", "done": false}, {"id": 43, "teamA": "場地 2｜混雙準決賽（4）A2", "teamB": "B1", "startTime": "1445", "referee": "王昱文", "done": false}, {"id": 44, "teamA": "場地 1｜男單決賽（1）勝", "teamB": "（2）勝", "startTime": "1510", "referee": "劉怡伶", "done": false}, {"id": 45, "teamA": "場地 1｜男雙決賽", "teamB": "待定", "startTime": "1530", "referee": "陳雅玲", "done": false}, {"id": 46, "teamA": "場地 1｜混雙決賽（3）勝", "teamB": "（4）勝", "startTime": "1555", "referee": "李承恩", "done": false}];
 
 let teamWins = {};
 let matchScores = {};
@@ -702,6 +709,7 @@ function renderCourtBoards() {
           </div>
         </div>
       </div>
+      <div class="referee-line">裁判：<span class="referee-name">${m.referee || '待定'}</span></div>
       <div class="match-actions">
         ${m.done ? `
           <button class="btn btn-gray btn-sm" onclick="reopenMatch(${m.idx})">取消結束（重改）</button>
@@ -830,9 +838,10 @@ function renderMatchList() {
     const timeLabel = st.substring(0,2)+':'+st.substring(2);
     const teamALabel = displayMatchListTeam(m.teamA);
     const teamBLabel = displayMatchListTeam(m.teamB);
+    const refereeLabel = m.referee || '待定';
     return `<div class="match-item ${visibleMatchIndexes.includes(i)?'active':''}" id="mi-${i}" onclick="selectMatch(${i})">
       <span class="match-num">${i+1}</span>
-      <span class="match-teams-txt">${teamALabel}<br><small style="color:#94a3b8;font-weight:400;font-size:0.7rem;">vs</small> ${teamBLabel}</span>
+      <span class="match-teams-txt">${teamALabel} <small style="color:#94a3b8;font-weight:400;font-size:0.7rem;">vs</small> ${teamBLabel}<br><small style="color:#64748b;font-weight:700;font-size:0.86rem;">裁判：<span class="referee-name">${refereeLabel}</span></small></span>
       <span class="match-time-tag">${timeLabel}<br>${m.done?'<span class="match-done-tag">完成</span>':''}</span>
     </div>`;
   }).join('');
@@ -1187,11 +1196,12 @@ function renderMatchesEditor() {
       <input type="text" value="${m.teamA}" id="ea-${i}" placeholder="隊伍A">
       <input type="text" value="${m.teamB}" id="eb-${i}" placeholder="隊伍B">
       <input type="text" value="${m.startTime}" id="et-${i}" placeholder="0900" maxlength="4">
+      <input type="text" value="${m.referee || ''}" id="er-${i}" placeholder="裁判姓名">
       <button class="del-btn" onclick="deleteMatchRow(${i})">刪除</button>
     </div>`).join('');
 }
 function addMatchRow() {
-  matches.push({id:Date.now(),teamA:'',teamB:'',startTime:'',done:false});
+  matches.push({id:Date.now(),teamA:'',teamB:'',startTime:'',referee:'',done:false});
   renderMatchesEditor();
 }
 function deleteMatchRow(i) {
@@ -1209,6 +1219,7 @@ function applySettings() {
     teamA:document.getElementById('ea-'+i)?.value||'隊伍A',
     teamB:document.getElementById('eb-'+i)?.value||'隊伍B',
     startTime:document.getElementById('et-'+i)?.value||'0900',
+    referee:document.getElementById('er-'+i)?.value||'',
     done: matches[i].done,
   }));
   matchScores = {};
