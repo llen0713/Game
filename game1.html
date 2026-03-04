@@ -34,9 +34,10 @@
   @media(max-width:900px){.main{grid-template-columns:1fr;}}
 
   .timer-card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,0.07);padding:20px;border:1px solid #e2e8f0;}
+  .timer-card > .match-header{margin-bottom:2px;}
   .match-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;}
   .match-label{font-size:0.78rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
-  .match-name{font-size:1.1rem;font-weight:900;color:#1a1a2e;margin-bottom:4px;line-height:1.3;}
+  .match-name{font-size:1.4rem;font-weight:900;color:#1a1a2e;margin-bottom:4px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .match-meta{font-size:0.85rem;color:#64748b;}
   .status-badge{display:inline-block;padding:5px 16px;border-radius:20px;font-size:0.82rem;font-weight:700;letter-spacing:1px;white-space:nowrap;margin-top:4px;}
   .status-waiting{background:#fef9c3;color:#854d0e;}
@@ -53,6 +54,7 @@
   .timer-upcoming .timer-main{color:#0ea5e9;}
   .timer-ended .timer-main{color:#ef4444;}
   .timer-done .timer-main{color:#94a3b8;}
+  .slot-timer{text-align:center;padding:4px 0 10px;}
   @media(max-width:600px){.timer-main{font-size:2.2rem;}.timer-ms{font-size:1rem;}}
 
   .courts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -136,7 +138,7 @@
   body.projector .timer-card, body.projector .card{padding:24px;}
 
   body.projector .match-label{font-size:0.95rem;}
-  body.projector .match-name{font-size:1.4rem;}
+  body.projector .match-name{font-size:1.8rem;}
   body.projector .match-meta{font-size:1rem;}
   body.projector .status-badge{font-size:0.95rem;padding:7px 18px;}
 
@@ -187,11 +189,14 @@
   <div class="timer-card">
     <div class="match-header">
       <div>
-        <div class="match-label">四場同步</div>
         <div class="match-name" id="slot-title">— 請從右側選擇一個時段 —</div>
-        <div class="match-meta" id="slot-meta">同一時段最多顯示四場（場地 1~4）</div>
       </div>
       <span class="status-badge status-waiting" id="slot-badge">等待中</span>
+    </div>
+    <div class="slot-timer timer-display timer-upcoming" id="slot-timer-display">
+      <div class="timer-phase" id="slot-timer-phase">──</div>
+      <span class="timer-main" id="slot-timer-main">--:--:--</span><span class="timer-ms" id="slot-timer-ms"></span>
+      <div class="note" id="slot-timer-note">根據系統時間自動計時</div>
     </div>
     <div class="courts-grid" id="courts-grid">
       <div class="empty-board">請先在設定中新增場次</div>
@@ -269,7 +274,7 @@ let config = {
   title: '小地盃羽球',
 };
 
-let matches = [{"id": 1, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "楊舒心/簡家浩", "startTime": "0840", "done": false}, {"id": 2, "teamA": "場地 2｜混雙A：李長融/蔡仲元", "teamB": "蕭人豪/顏語緗", "startTime": "0840", "done": false}, {"id": 3, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "曹嘉修/劉怡伶", "startTime": "0840", "done": false}, {"id": 4, "teamA": "場地 4｜混雙B：徐子鈞/許寧珊", "teamB": "邱詠恬/潘昌志", "startTime": "0840", "done": false}, {"id": 5, "teamA": "場地 1｜男單A：潘昌志", "teamB": "黃振嘉", "startTime": "0910", "done": false}, {"id": 6, "teamA": "場地 2｜男單A：李承恩", "teamB": "王昱文", "startTime": "0910", "done": false}, {"id": 7, "teamA": "場地 3｜男單B：曹嘉修", "teamB": "李長融", "startTime": "0910", "done": false}, {"id": 8, "teamA": "場地 4｜混雙B：曾瑀婕/許淏丞", "teamB": "江宜達/陳雅玲", "startTime": "0910", "done": false}, {"id": 9, "teamA": "場地 1｜混雙A：林星辰/陳予禮", "teamB": "詹宇崴/蔡依宸", "startTime": "0940", "done": false}, {"id": 10, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "王昱文/黃振嘉", "startTime": "0940", "done": false}, {"id": 11, "teamA": "場地 3｜混雙B：邱詠恬/潘昌志", "teamB": "曾瑀婕/許淏丞", "startTime": "0940", "done": false}, {"id": 12, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "徐子鈞/許寧珊", "startTime": "0940", "done": false}, {"id": 13, "teamA": "場地 1｜男單A：潘昌志", "teamB": "李承恩", "startTime": "1010", "done": false}, {"id": 14, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "王昱文", "startTime": "1010", "done": false}, {"id": 15, "teamA": "場地 3｜男雙：詹宇崴/許淏丞", "teamB": "陳冠岳/游承晏", "startTime": "1010", "done": false}, {"id": 16, "teamA": "場地 4｜混雙B：江宜達/陳雅玲", "teamB": "徐子鈞/許寧珊", "startTime": "1010", "done": false}, {"id": 17, "teamA": "場地 1｜男雙：徐子鈞/李錦坤", "teamB": "詹宇崴/許淏丞", "startTime": "1040", "done": false}, {"id": 18, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "陳冠曄/李佳翰", "startTime": "1040", "done": false}, {"id": 19, "teamA": "場地 3｜混雙A：蕭人豪/顏語緗", "teamB": "林星辰/陳予禮", "startTime": "1040", "done": false}, {"id": 20, "teamA": "場地 4｜男單B：江宜達", "teamB": "李長融", "startTime": "1040", "done": false}, {"id": 21, "teamA": "場地 1｜混雙B：曹嘉修/劉怡伶", "teamB": "邱詠恬/潘昌志", "startTime": "1110", "done": false}, {"id": 22, "teamA": "場地 2｜混雙B：徐子鈞/許寧珊", "teamB": "曾瑀婕/許淏丞", "startTime": "1110", "done": false}, {"id": 23, "teamA": "場地 3｜男雙：陳冠岳/游承晏", "teamB": "王昱文/黃振嘉", "startTime": "1110", "done": false}, {"id": 24, "teamA": "場地 4｜混雙A：詹宇崴/蔡依宸", "teamB": "李長融/蔡仲元", "startTime": "1110", "done": false}, {"id": 25, "teamA": "場地 1｜男單A：潘昌志", "teamB": "王昱文", "startTime": "1140", "done": false}, {"id": 26, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "李承恩", "startTime": "1140", "done": false}, {"id": 27, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "蕭人豪/顏語緗", "startTime": "1140", "done": false}, {"id": 28, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "曾瑀婕/許淏丞", "startTime": "1140", "done": false}, {"id": 29, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "陳冠曄/李佳翰", "startTime": "1305", "done": false}, {"id": 30, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "徐子鈞/李錦坤", "startTime": "1305", "done": false}, {"id": 31, "teamA": "場地 3｜混雙A：李長融/蔡仲元", "teamB": "林星辰/陳予禮", "startTime": "1305", "done": false}, {"id": 32, "teamA": "場地 4｜男單B：江宜達", "teamB": "曹嘉修", "startTime": "1305", "done": false}, {"id": 33, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "蕭人豪/顏語緗", "startTime": "1330", "done": false}, {"id": 34, "teamA": "場地 2｜混雙A：楊舒心/簡家浩", "teamB": "林星辰/陳予禮", "startTime": "1330", "done": false}, {"id": 35, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "邱詠恬/潘昌志", "startTime": "1330", "done": false}, {"id": 36, "teamA": "場地 4｜男雙：王昱文/黃振嘉", "teamB": "徐子鈞/李錦坤", "startTime": "1330", "done": false}, {"id": 37, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "王昱文/黃振嘉", "startTime": "1355", "done": false}, {"id": 38, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "徐子鈞/李錦坤", "startTime": "1355", "done": false}, {"id": 39, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "李長融/蔡仲元", "startTime": "1355", "done": false}, {"id": 40, "teamA": "場地 1｜男單準決賽（1）A1", "teamB": "B2", "startTime": "1420", "done": false}, {"id": 41, "teamA": "場地 2｜男單準決賽（2）A2", "teamB": "B1", "startTime": "1420", "done": false}, {"id": 42, "teamA": "場地 1｜混雙準決賽（3）A1", "teamB": "B2", "startTime": "1445", "done": false}, {"id": 43, "teamA": "場地 2｜混雙準決賽（4）A2", "teamB": "B1", "startTime": "1445", "done": false}, {"id": 44, "teamA": "場地 1｜男單決賽（1）勝", "teamB": "（2）勝", "startTime": "1510", "done": false}, {"id": 45, "teamA": "場地 1｜男雙決賽（循環賽前2名） A1", "teamB": "A2", "startTime": "1530", "done": false}, {"id": 46, "teamA": "場地 1｜混雙決賽（3）勝", "teamB": "（4）勝", "startTime": "1555", "done": false}];
+let matches = [{"id": 1, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "楊舒心/簡家浩", "startTime": "0840", "done": false}, {"id": 2, "teamA": "場地 2｜混雙A：李長融/蔡仲元", "teamB": "蕭人豪/顏語緗", "startTime": "0840", "done": false}, {"id": 3, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "曹嘉修/劉怡伶", "startTime": "0840", "done": false}, {"id": 4, "teamA": "場地 4｜混雙B：徐子鈞/許寧珊", "teamB": "邱詠恬/潘昌志", "startTime": "0840", "done": false}, {"id": 5, "teamA": "場地 1｜男單A：潘昌志", "teamB": "黃振嘉", "startTime": "0910", "done": false}, {"id": 6, "teamA": "場地 2｜男單A：李承恩", "teamB": "王昱文", "startTime": "0910", "done": false}, {"id": 7, "teamA": "場地 3｜男單B：曹嘉修", "teamB": "李長融", "startTime": "0910", "done": false}, {"id": 8, "teamA": "場地 4｜混雙B：曾瑀婕/許淏丞", "teamB": "江宜達/陳雅玲", "startTime": "0910", "done": false}, {"id": 9, "teamA": "場地 1｜混雙A：林星辰/陳予禮", "teamB": "詹宇崴/蔡依宸", "startTime": "0940", "done": false}, {"id": 10, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "王昱文/黃振嘉", "startTime": "0940", "done": false}, {"id": 11, "teamA": "場地 3｜混雙B：邱詠恬/潘昌志", "teamB": "曾瑀婕/許淏丞", "startTime": "0940", "done": false}, {"id": 12, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "徐子鈞/許寧珊", "startTime": "0940", "done": false}, {"id": 13, "teamA": "場地 1｜男單A：潘昌志", "teamB": "李承恩", "startTime": "1010", "done": false}, {"id": 14, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "王昱文", "startTime": "1010", "done": false}, {"id": 15, "teamA": "場地 3｜男雙：詹宇崴/許淏丞", "teamB": "陳冠岳/游承晏", "startTime": "1010", "done": false}, {"id": 16, "teamA": "場地 4｜混雙B：江宜達/陳雅玲", "teamB": "徐子鈞/許寧珊", "startTime": "1010", "done": false}, {"id": 17, "teamA": "場地 1｜男雙：徐子鈞/李錦坤", "teamB": "詹宇崴/許淏丞", "startTime": "1040", "done": false}, {"id": 18, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "陳冠曄/李佳翰", "startTime": "1040", "done": false}, {"id": 19, "teamA": "場地 3｜混雙A：蕭人豪/顏語緗", "teamB": "林星辰/陳予禮", "startTime": "1040", "done": false}, {"id": 20, "teamA": "場地 4｜男單B：江宜達", "teamB": "李長融", "startTime": "1040", "done": false}, {"id": 21, "teamA": "場地 1｜混雙B：曹嘉修/劉怡伶", "teamB": "邱詠恬/潘昌志", "startTime": "1110", "done": false}, {"id": 22, "teamA": "場地 2｜混雙B：徐子鈞/許寧珊", "teamB": "曾瑀婕/許淏丞", "startTime": "1110", "done": false}, {"id": 23, "teamA": "場地 3｜男雙：陳冠岳/游承晏", "teamB": "王昱文/黃振嘉", "startTime": "1110", "done": false}, {"id": 24, "teamA": "場地 4｜混雙A：詹宇崴/蔡依宸", "teamB": "李長融/蔡仲元", "startTime": "1110", "done": false}, {"id": 25, "teamA": "場地 1｜男單A：潘昌志", "teamB": "王昱文", "startTime": "1140", "done": false}, {"id": 26, "teamA": "場地 2｜男單A：黃振嘉", "teamB": "李承恩", "startTime": "1140", "done": false}, {"id": 27, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "蕭人豪/顏語緗", "startTime": "1140", "done": false}, {"id": 28, "teamA": "場地 4｜混雙B：曹嘉修/劉怡伶", "teamB": "曾瑀婕/許淏丞", "startTime": "1140", "done": false}, {"id": 29, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "陳冠曄/李佳翰", "startTime": "1305", "done": false}, {"id": 30, "teamA": "場地 2｜男雙：陳冠岳/游承晏", "teamB": "徐子鈞/李錦坤", "startTime": "1305", "done": false}, {"id": 31, "teamA": "場地 3｜混雙A：李長融/蔡仲元", "teamB": "林星辰/陳予禮", "startTime": "1305", "done": false}, {"id": 32, "teamA": "場地 4｜男單B：江宜達", "teamB": "曹嘉修", "startTime": "1305", "done": false}, {"id": 33, "teamA": "場地 1｜混雙A：詹宇崴/蔡依宸", "teamB": "蕭人豪/顏語緗", "startTime": "1330", "done": false}, {"id": 34, "teamA": "場地 2｜混雙A：楊舒心/簡家浩", "teamB": "林星辰/陳予禮", "startTime": "1330", "done": false}, {"id": 35, "teamA": "場地 3｜混雙B：江宜達/陳雅玲", "teamB": "邱詠恬/潘昌志", "startTime": "1330", "done": false}, {"id": 36, "teamA": "場地 4｜男雙：王昱文/黃振嘉", "teamB": "徐子鈞/李錦坤", "startTime": "1330", "done": false}, {"id": 37, "teamA": "場地 1｜男雙：詹宇崴/許淏丞", "teamB": "王昱文/黃振嘉", "startTime": "1355", "done": false}, {"id": 38, "teamA": "場地 2｜男雙：陳冠曄/李佳翰", "teamB": "徐子鈞/李錦坤", "startTime": "1355", "done": false}, {"id": 39, "teamA": "場地 3｜混雙A：楊舒心/簡家浩", "teamB": "李長融/蔡仲元", "startTime": "1355", "done": false}, {"id": 40, "teamA": "場地 1｜男單準決賽（1）A1", "teamB": "B2", "startTime": "1420", "done": false}, {"id": 41, "teamA": "場地 2｜男單準決賽（2）A2", "teamB": "B1", "startTime": "1420", "done": false}, {"id": 42, "teamA": "場地 1｜混雙準決賽（3）A1", "teamB": "B2", "startTime": "1445", "done": false}, {"id": 43, "teamA": "場地 2｜混雙準決賽（4）A2", "teamB": "B1", "startTime": "1445", "done": false}, {"id": 44, "teamA": "場地 1｜男單決賽（1）勝", "teamB": "（2）勝", "startTime": "1510", "done": false}, {"id": 45, "teamA": "場地 1｜男雙決賽", "teamB": "待定", "startTime": "1530", "done": false}, {"id": 46, "teamA": "場地 1｜混雙決賽（3）勝", "teamB": "（4）勝", "startTime": "1555", "done": false}];
 
 let teamWins = {};
 let matchScores = {};
@@ -307,7 +312,8 @@ function pad(n){return String(n).padStart(2,'0');}
 
 function displayTeamName(name) {
   if (!name) return '';
-  const cleaned = String(name).replace(/^場地\s*\d+｜[^：:]+[：:]\s*/, '').trim();
+  const withoutCourt = String(name).replace(/^場地\s*\d+｜\s*/, '').trim();
+  const cleaned = withoutCourt.replace(/^[^：:]+[：:]\s*/, '').trim();
   if (/(準決賽|決賽)/.test(cleaned)) {
     const seeds = cleaned.match(/[A-Za-z]\s*\d+/g);
     if (seeds && seeds.length) {
@@ -323,6 +329,7 @@ function displayTeamName(name) {
     }
     if (cleaned.includes('待定')) return '待定';
     if (cleaned.includes('勝者')) return '勝者';
+    if (/^(?:男單|混雙|男雙)?\s*(?:準決賽|決賽)(?:（[^）]+）)?$/.test(cleaned)) return '待定';
   }
   return cleaned;
 }
@@ -353,6 +360,25 @@ function ensureScoreState(idx) {
     matchScores[idx] = {a: 0, b: 0};
   }
   return matchScores[idx];
+}
+
+function recalculateTeamWins() {
+  teamWins = {};
+  matches.forEach((m, idx) => {
+    if (!m.done) return;
+    const state = ensureScoreState(idx);
+    const forfeitSide = matchForfeit[idx] || null;
+    const winner = forfeitSide === 'a'
+      ? m.teamB
+      : forfeitSide === 'b'
+        ? m.teamA
+        : state.a > state.b
+          ? m.teamA
+          : state.b > state.a
+            ? m.teamB
+            : null;
+    if (winner) teamWins[winner] = (teamWins[winner] || 0) + 1;
+  });
 }
 
 function setForfeit(idx, side) {
@@ -513,9 +539,22 @@ function getSlotStartTimeToShow() {
 function getVisibleMatches() {
   const slotTime = getSlotStartTimeToShow();
   if (!slotTime) return [];
+
+  const layoutOrder = {2: 1, 1: 2, 4: 3, 3: 4};
+  const getCourtNumber = (teamA) => {
+    const m = String(teamA || '').match(/^場地\s*(\d+)/);
+    return m ? parseInt(m[1], 10) : 999;
+  };
+
   return matches
     .map((m, idx) => ({...m, idx}))
     .filter(m => String(m.startTime).padStart(4,'0') === slotTime)
+    .sort((a, b) => {
+      const orderA = layoutOrder[getCourtNumber(a.teamA)] || 999;
+      const orderB = layoutOrder[getCourtNumber(b.teamA)] || 999;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.idx - b.idx;
+    })
     .slice(0, 4);
 }
 
@@ -537,10 +576,9 @@ function getMatchTimerState(m, now) {
     };
   }
   if (now <= endT) {
-    const f = fmtTenths(endT - now);
     return {
-      phase: '剩餘時間', mainTxt: f.main, msTxt: f.ms, cls: 'timer-running',
-      badgeClass: 'status-running', badgeLabel: '計時中', note: `結束時間：${fmtEndTime(endT)}`
+      phase: '進行中', mainTxt: '進行中', msTxt: '', cls: 'timer-running',
+      badgeClass: 'status-running', badgeLabel: '進行中', note: ''
     };
   }
   if (now <= endT + overtime) {
@@ -599,15 +637,18 @@ function renderCourtBoards() {
 
   if (!visible.length) {
     document.getElementById('slot-title').textContent = '— 今日場次已全部完成 —';
-    document.getElementById('slot-meta').textContent = '可在設定中重置或新增場次';
+    document.getElementById('slot-timer-phase').textContent = '已結束';
+    document.getElementById('slot-timer-main').textContent = '00:00:00';
+    document.getElementById('slot-timer-ms').textContent = '.0';
+    document.getElementById('slot-timer-note').textContent = '';
+    document.getElementById('slot-timer-display').className = 'slot-timer timer-display timer-done';
     setSlotBadge('status-done', '全部完成');
     el.innerHTML = '<div class="empty-board">目前沒有可顯示的四場時段</div>';
     return;
   }
 
   const slotTime = String(visible[0].startTime).padStart(4, '0');
-  document.getElementById('slot-title').textContent = `時段 ${slotTime.substring(0,2)}:${slotTime.substring(2)}（四場同步）`;
-  document.getElementById('slot-meta').textContent = `時長 ${config.duration} 分鐘｜可分別計分與結束`;
+  document.getElementById('slot-title').textContent = `${slotTime.substring(0,2)}:${slotTime.substring(2)}`;
 
   el.innerHTML = visible.map((m, cardIdx) => {
     const state = ensureScoreState(m.idx);
@@ -623,11 +664,6 @@ function renderCourtBoards() {
           <div class="match-meta">開始 ${slotTime.substring(0,2)}:${slotTime.substring(2)}</div>
         </div>
         <span class="status-badge status-waiting" id="status-badge-${m.idx}">等待中</span>
-      </div>
-      <div class="timer-display" id="timer-display-${m.idx}">
-        <div class="timer-phase" id="timer-phase-${m.idx}">──</div>
-        <span class="timer-main" id="timer-main-${m.idx}">--:--:--</span><span class="timer-ms" id="timer-ms-${m.idx}"></span>
-        <div class="note" id="timer-note-${m.idx}">根據系統時間自動計時</div>
       </div>
       <div class="scoreboard">
         <div class="team-block" id="team-a-block-${m.idx}">
@@ -651,11 +687,14 @@ function renderCourtBoards() {
         </div>
       </div>
       <div class="match-actions">
-        <button class="btn btn-blue btn-sm" onclick="markMatchDone(${m.idx})">記錄結果並結束此場</button>
-        <button class="btn btn-gray btn-sm" onclick="resetScore(${m.idx})">重置比分</button>
-        <button class="btn btn-red btn-sm" onclick="setForfeit(${m.idx},'a')">A棄權</button>
-        <button class="btn btn-red btn-sm" onclick="setForfeit(${m.idx},'b')">B棄權</button>
-        <button class="btn btn-gray btn-sm" onclick="setForfeit(${m.idx},null)">取消棄權</button>
+        ${m.done ? `
+          <button class="btn btn-gray btn-sm" onclick="reopenMatch(${m.idx})">取消結束（重改）</button>
+        ` : `
+          <button class="btn btn-blue btn-sm" onclick="markMatchDone(${m.idx})">記錄結果並結束此場</button>
+          <button class="btn btn-gray btn-sm" onclick="resetScore(${m.idx})">重置比分</button>
+          <button class="btn btn-red btn-sm" onclick="setForfeit(${m.idx},'a')">A棄權</button>
+          <button class="btn btn-red btn-sm" onclick="setForfeit(${m.idx},'b')">B棄權</button>
+        `}
       </div>
       <div class="forfeit-note" id="forfeit-note-${m.idx}">${matchForfeit[m.idx]==='a' ? `棄權：${displayTeamName(m.teamA)}` : matchForfeit[m.idx]==='b' ? `棄權：${displayTeamName(m.teamB)}` : ''}</div>
     </div>`;
@@ -670,24 +709,29 @@ function updateTimersForVisibleBoards() {
   const now = nowTenths();
   let hasRunning = false;
   let hasUpcoming = false;
+  let representative = null;
 
   visibleMatchIndexes.forEach(idx => {
     const m = matches[idx];
     if (!m) return;
     const t = getMatchTimerState(m, now);
-    const disp = document.getElementById('timer-display-'+idx);
-    if (!disp) return;
-
-    disp.className = 'timer-display ' + t.cls;
-    document.getElementById('timer-phase-'+idx).textContent = t.phase;
-    document.getElementById('timer-main-'+idx).textContent = t.mainTxt;
-    document.getElementById('timer-ms-'+idx).textContent = t.msTxt;
-    document.getElementById('timer-note-'+idx).textContent = t.note;
     setCardBadge(idx, t.badgeClass, t.badgeLabel);
+
+    if (!representative && !m.done) representative = t;
+    if (!representative) representative = t;
 
     if (t.badgeClass === 'status-running') hasRunning = true;
     if (t.badgeClass === 'status-upcoming') hasUpcoming = true;
   });
+
+  if (representative) {
+    const slotDisplay = document.getElementById('slot-timer-display');
+    slotDisplay.className = 'slot-timer timer-display ' + representative.cls;
+    document.getElementById('slot-timer-phase').textContent = representative.phase;
+    document.getElementById('slot-timer-main').textContent = representative.mainTxt;
+    document.getElementById('slot-timer-ms').textContent = representative.msTxt;
+    document.getElementById('slot-timer-note').textContent = representative.note;
+  }
 
   if (hasRunning) setSlotBadge('status-running', '進行中');
   else if (hasUpcoming) setSlotBadge('status-upcoming', '即將開始');
@@ -743,19 +787,19 @@ function markMatchDone(idx) {
   if (!m) return;
   if (m.done) { alert('此場次已記錄完成。'); return; }
 
-  const state = ensureScoreState(idx);
-  const forfeitSide = matchForfeit[idx] || null;
   m.done = true;
-  const winner = forfeitSide === 'a'
-    ? m.teamB
-    : forfeitSide === 'b'
-      ? m.teamA
-      : state.a > state.b
-        ? m.teamA
-        : state.b > state.a
-          ? m.teamB
-          : null;
-  if (winner) teamWins[winner] = (teamWins[winner] || 0) + 1;
+  recalculateTeamWins();
+
+  renderCourtBoards();
+  renderMatchList();
+  renderScoreSummary();
+}
+
+function reopenMatch(idx) {
+  const m = matches[idx];
+  if (!m || !m.done) return;
+  m.done = false;
+  recalculateTeamWins();
 
   renderCourtBoards();
   renderMatchList();
@@ -1129,6 +1173,7 @@ function applySettings() {
     done: matches[i].done,
   }));
   matchScores = {};
+  teamWins = {};
   matchForfeit = {};
   coinTossRanks = {};
   forcedSlotStartTime = null;
