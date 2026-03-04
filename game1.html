@@ -1030,6 +1030,7 @@ function renderScoreSummary() {
             <th style="padding:5px 6px;font-weight:700;">得分</th>
             <th style="padding:5px 6px;font-weight:700;">失分</th>
             <th style="padding:5px 6px;font-weight:700;">勝場</th>
+            <th style="padding:5px 6px;font-weight:700;">敗場</th>
             <th style="padding:5px 6px;font-weight:700;">棄權</th>
             <th style="padding:5px 6px;font-weight:700;">得失分</th>
           </tr>
@@ -1041,9 +1042,10 @@ function renderScoreSummary() {
               <td style="text-align:center;padding:6px;">${s.pf}</td>
               <td style="text-align:center;padding:6px;">${s.pa}</td>
               <td style="text-align:center;padding:6px;color:#16a34a;font-weight:700;">${s.w}</td>
+              <td style="text-align:center;padding:6px;color:#f59e0b;font-weight:700;">${s.l}</td>
               <td style="text-align:center;padding:6px;color:#ef4444;font-weight:700;">${s.f}</td>
               <td style="text-align:center;padding:6px;">${(s.pf-s.pa)>=0?'+':''}${s.pf-s.pa}</td>
-            </tr>`).join('') : `<tr><td colspan="8" style="padding:8px;color:#94a3b8;text-align:center;">尚無資料</td></tr>`}
+            </tr>`).join('') : `<tr><td colspan="9" style="padding:8px;color:#94a3b8;text-align:center;">尚無資料</td></tr>`}
         </table>
         ${sorted.length ? `
         <div style="padding:8px 10px 4px;color:#64748b;font-weight:700;">對戰成績紀錄表</div>
@@ -1051,7 +1053,7 @@ function renderScoreSummary() {
           <table style="width:100%;border-collapse:collapse;font-size:0.8rem;min-width:520px;">
             <tr style="background:#f8fafc;color:#475569;">
               <th style="border:1px solid #e2e8f0;padding:6px;text-align:left;white-space:nowrap;">隊伍</th>
-              ${sorted.map((_, i) => `<th style="border:1px solid #e2e8f0;padding:6px;text-align:center;">${i+1}</th>`).join('')}
+              ${sorted.map(([colName]) => `<th style="border:1px solid #e2e8f0;padding:6px;text-align:center;white-space:nowrap;">${colName}</th>`).join('')}
             </tr>
             ${sorted.map(([rowName], rowIdx) => `
               <tr>
