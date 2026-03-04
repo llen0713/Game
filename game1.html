@@ -339,6 +339,17 @@ function displayTeamName(name) {
   return cleaned;
 }
 
+function displayMatchListTeam(name) {
+  const raw = String(name || '').trim();
+  if (!raw) return '';
+  if (/(準決賽|決賽)/.test(raw) && !raw.includes('待定') && !raw.includes('勝者')) {
+    const hasSeed = /[A-Za-z]\s*\d+/.test(raw);
+    const hasSlot = /（\d+）/.test(raw);
+    if (!hasSeed && !hasSlot) return `${raw} 待定`;
+  }
+  return raw;
+}
+
 function stripCourtPrefix(name) {
   return String(name || '').replace(/^場地\s*\d+｜/, '').trim();
 }
@@ -817,9 +828,11 @@ function renderMatchList() {
   el.innerHTML = matches.map((m,i) => {
     const st = String(m.startTime).padStart(4,'0');
     const timeLabel = st.substring(0,2)+':'+st.substring(2);
+    const teamALabel = displayMatchListTeam(m.teamA);
+    const teamBLabel = displayMatchListTeam(m.teamB);
     return `<div class="match-item ${visibleMatchIndexes.includes(i)?'active':''}" id="mi-${i}" onclick="selectMatch(${i})">
       <span class="match-num">${i+1}</span>
-      <span class="match-teams-txt">${m.teamA}<br><small style="color:#94a3b8;font-weight:400;font-size:0.7rem;">vs</small> ${m.teamB}</span>
+      <span class="match-teams-txt">${teamALabel}<br><small style="color:#94a3b8;font-weight:400;font-size:0.7rem;">vs</small> ${teamBLabel}</span>
       <span class="match-time-tag">${timeLabel}<br>${m.done?'<span class="match-done-tag">完成</span>':''}</span>
     </div>`;
   }).join('');
